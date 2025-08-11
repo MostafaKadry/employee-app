@@ -1,28 +1,42 @@
-'use client';
-import { useState } from 'react';
-import Link from 'next/link';
-import { useApp } from '@/context/AppContext';
-import { FiPlus, FiEdit, FiTrash2, FiEye, FiSearch, FiBriefcase } from 'react-icons/fi';
-import Swal from 'sweetalert2';
-
+"use client";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useApp } from "@/context/AppContext";
+import {
+  FiPlus,
+  FiEdit,
+  FiTrash2,
+  FiEye,
+  FiSearch,
+  FiBriefcase,
+} from "react-icons/fi";
+import Swal from "sweetalert2";
+import {
+  getAllDepartments,
+  deleteDepartment,
+} from "@/services/departments/api";
+import toast from "react-hot-toast";
+import LoadingSpinner from "@/components/LoadingSpinner";
 export default function DepartmentsPage() {
   const { departments, deleteDepartment } = useApp();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const filteredDepartments = departments.filter(department =>
-    department.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    department.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredDepartments = departments.filter(
+    (department) =>
+      department.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      department.companyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDelete = (department) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: `This will delete ${department.name} and cannot be undone!`,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#EF4444',
-      cancelButtonColor: '#6B7280',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonColor: "#EF4444",
+      cancelButtonColor: "#6B7280",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
         deleteDepartment(department.id);
@@ -88,15 +102,24 @@ export default function DepartmentsPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredDepartments.map((department) => (
-                  <tr key={department.id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={department.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{department.name}</div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {department.name}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{department.companyName}</div>
+                      <div className="text-sm text-gray-900">
+                        {department.companyName}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{department.description}</div>
+                      <div className="text-sm text-gray-900">
+                        {department.description}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">
@@ -131,9 +154,13 @@ export default function DepartmentsPage() {
         ) : (
           <div className="text-center py-12">
             <FiBriefcase className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No departments found</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              No departments found
+            </h3>
             <p className="mt-1 text-sm text-gray-500">
-              {searchTerm ? 'Try adjusting your search terms' : 'Get started by creating a new department'}
+              {searchTerm
+                ? "Try adjusting your search terms"
+                : "Get started by creating a new department"}
             </p>
             {!searchTerm && (
               <div className="mt-6">

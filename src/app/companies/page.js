@@ -3,20 +3,20 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiSearch } from 'react-icons/fi';
-import { getAllCompanies } from '@/services/company/api';
+import { getAllCompanies, deleteCompany } from '@/services/company/api';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { FaBuilding } from "react-icons/fa";
 export default function CompaniesPage() {
-  const { companies, deleteCompany, dispatch } = useApp();
+  const { companies, dispatch } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   console.log(companies);
   const filteredCompanies = companies?.filter(company =>
     company?.name?.toLowerCase().includes(searchTerm.toLowerCase())  );
 
-  const handleDelete = (company) => {
+  const handleDelete = async (company) => {
     Swal.fire({
       title: 'Are you sure?',
       text: `This will delete ${company.name} and cannot be undone!`,
@@ -25,9 +25,14 @@ export default function CompaniesPage() {
       confirmButtonColor: '#EF4444',
       cancelButtonColor: '#6B7280',
       confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        deleteCompany(company.name);
+        const res = await deleteCompany(company.name);
+        console.log(res);
+        if (res.status === 200) {
+          dispatch({ type: 'SET_COMPANIES', payload: res.data.data });
+          console.log(companies);
+        }
       }
     });
   };
