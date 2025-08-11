@@ -57,41 +57,26 @@ export default function CreateEmployeePage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                First Name *
+              <label htmlFor="employee_name" className="block text-sm font-medium text-gray-700 mb-1">
+                Employee Name *
               </label>
               <input
-                {...register('firstName', { required: 'First name is required' })}
+                {...register('employee_name', { required: 'Employee name is required' })}
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter first name"
+                placeholder="Enter employee name"
               />
-              {errors.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
+              {errors.employee_name && (
+                <p className="mt-1 text-sm text-red-600">{errors.employee_name.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                Last Name *
-              </label>
-              <input
-                {...register('lastName', { required: 'Last name is required' })}
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter last name"
-              />
-              {errors.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="employee_email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address *
               </label>
               <input
-                {...register('email', { 
+                {...register('employee_email', { 
                   required: 'Email is required',
                   pattern: {
                     value: /^\S+@\S+$/i,
@@ -102,52 +87,38 @@ export default function CreateEmployeePage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter email address"
               />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              {errors.employee_email && (
+                <p className="mt-1 text-sm text-red-600">{errors.employee_email.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="employee_phone" className="block text-sm font-medium text-gray-700 mb-1">
                 Phone Number *
               </label>
               <input
-                {...register('phone', { required: 'Phone number is required' })}
+                {...register('employee_phone', { required: 'Phone number is required' })}
                 type="tel"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter phone number"
               />
-              {errors.phone && (
-                <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+              {errors.employee_phone && (
+                <p className="mt-1 text-sm text-red-600">{errors.employee_phone.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="designation_positiontitle" className="block text-sm font-medium text-gray-700 mb-1">
                 Position *
               </label>
               <input
-                {...register('position', { required: 'Position is required' })}
+                {...register('designation_positiontitle', { required: 'Position is required' })}
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter position"
               />
-              {errors.position && (
-                <p className="mt-1 text-sm text-red-600">{errors.position.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="hireDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Hire Date *
-              </label>
-              <input
-                {...register('hireDate', { required: 'Hire date is required' })}
-                type="date"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              {errors.hireDate && (
-                <p className="mt-1 text-sm text-red-600">{errors.hireDate.message}</p>
+              {errors.designation_positiontitle && (
+                <p className="mt-1 text-sm text-red-600">{errors.designation_positiontitle.message}</p>
               )}
             </div>
 
@@ -156,7 +127,7 @@ export default function CreateEmployeePage() {
                 Company *
               </label>
               <Controller
-                name="companyId"
+                name="company"
                 control={control}
                 rules={{ required: 'Company is required' }}
                 render={({ field }) => (
@@ -179,8 +150,8 @@ export default function CreateEmployeePage() {
                   />
                 )}
               />
-              {errors.companyId && (
-                <p className="mt-1 text-sm text-red-600">{errors.companyId.message}</p>
+              {errors.company && (
+                <p className="mt-1 text-sm text-red-600">{errors.company.message}</p>
               )}
             </div>
 
@@ -189,7 +160,7 @@ export default function CreateEmployeePage() {
                 Department *
               </label>
               <Controller
-                name="departmentId"
+                name="department"
                 control={control}
                 rules={{ required: 'Department is required' }}
                 render={({ field }) => (
@@ -216,8 +187,8 @@ export default function CreateEmployeePage() {
               {!selectedCompany && (
                 <p className="mt-1 text-sm text-gray-500">Please select a company first</p>
               )}
-              {errors.departmentId && (
-                <p className="mt-1 text-sm text-red-600">{errors.departmentId.message}</p>
+              {errors.department && (
+                <p className="mt-1 text-sm text-red-600">{errors.department.message}</p>
               )}
             </div>
           </div>

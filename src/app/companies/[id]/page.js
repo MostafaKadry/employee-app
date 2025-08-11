@@ -50,8 +50,8 @@ export default function ViewCompanyPage() {
     );
   }
 
-  const companyDepartments = departments.filter(d => d.companyId === company.name);
-  const companyEmployees = employees.filter(e => e.companyId === company.name);
+  const companyDepartments = departments.filter(d => d.company === company.name);
+  const companyEmployees = employees.filter(e => e.company === company.name);
 
   return (
     <div className="space-y-6">
@@ -66,7 +66,7 @@ export default function ViewCompanyPage() {
               <FiArrowLeft className="h-5 w-5" />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{company.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{company.company_name}</h1>
               <p className="text-gray-600">Company Details</p>
             </div>
           </div>
@@ -91,8 +91,7 @@ export default function ViewCompanyPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {companyDepartments.map((department) => (
                 <div key={department.name} className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-medium text-gray-900">{department.name}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{department.description}</p>
+                  <h3 className="font-medium text-gray-900">{department.department_name}</h3>
                   <div className="mt-2">
                     <Link
                       href={`/departments/${department.name}`}
@@ -122,12 +121,12 @@ export default function ViewCompanyPage() {
                 <div key={employee.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-900">
-                      {employee.firstName} {employee.lastName}
+                      {employee.employee_name}
                     </p>
-                    <p className="text-sm text-gray-600">{employee.position}</p>
+                    <p className="text-sm text-gray-600">{employee.designation_positiontitle}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-gray-700">{employee.departmentName}</p>
+                    <p className="text-sm font-medium text-gray-700">{employee.department}</p>
                     <Link
                       href={`/employees/${employee.name}`}
                       className="text-sm text-blue-600 hover:text-blue-800 transition-colors"

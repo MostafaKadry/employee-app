@@ -1,50 +1,149 @@
-'use client';
-import { useParams, useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { useApp } from '@/context/AppContext';
-import { FiArrowLeft } from 'react-icons/fi';
-import Link from 'next/link';
-import Select from 'react-select';
+"use client";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import { useApp } from "@/context/AppContext";
+import { FiArrowLeft } from "react-icons/fi";
+import Link from "next/link";
+import Select from "react-select";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import ToastArrayOfErrors from "@/lib/ToastArrayOfErrors";
+import { getEmployeeById, updateEmployee } from "@/services/employee/api";
+import { getAllCompanies } from "@/services/company/api";
+import { getAllDepartments } from "@/services/departments/api";
 
 export default function EditEmployeePage() {
   const params = useParams();
   const router = useRouter();
-  const { companies, departments, employees, updateEmployee } = useApp();
-  const employee = employees.find(e => e.id === parseInt(params.id));
+  const [employee, setEmployee] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [companies, setCompanies] = useState([]);
+  const [allDepartments, setAllDepartments] = useState([]);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
 
-  const companyOptions = companies.map(company => ({
+  const companyOptions = companies?.map((company) => ({
     value: company.name,
-    label: company.name
+    label: company.name,
   }));
 
-  const defaultCompany = companyOptions.find(option => option.value === employee?.companyId);
-  
-  const { register, handleSubmit, control, watch, formState: { errors, isSubmitting } } = useForm({
-    defaultValues: {
-      ...employee,
-      companyId: defaultCompany,
-      departmentId: departments.find(d => d.name === employee?.departmentId) ? {
-        value: employee.departmentId,
-        label: employee.departmentName
-      } : null
-    }
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors, isSubmitting },
+    reset,
+    setValue,
+  } = useForm({
+    defaultValues: {},
   });
 
-  const selectedCompany = watch('companyId');
+  const selectedCompany = watch("company");
 
-  const departmentOptions = departments
-    .filter(dept => !selectedCompany || dept.companyId === selectedCompany.value)
-    .map(department => ({
-      value: department.name,
-      label: department.name
-    }));
+  const onSubmit = async (data) => {
+    updateEmployee({
+      ...data,
+      id: employee.name,
+      company: data.company.value,
+      department: data.department.value,
+    });
+    router.push(`/employees/${employee.name}`);
+  };
+  useEffect(() => {
+    const fetchCompaniesAndDepartments = async () => {
+      setLoading(true);
+      try {
+        const [companiesRes, departmentsRes] = await Promise.all([
+          getAllCompanies(),
+          getAllDepartments(),
+        ]);
+        if (companiesRes.status === 200) {
+          setCompanies(companiesRes.data.data);
+        }
+        if (departmentsRes.status === 200) {
+          setAllDepartments(departmentsRes.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        ToastArrayOfErrors(
+          error?.response?.data?.errors,
+          error?.response?.data?.message || "Failed to fetch companies and departments"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCompaniesAndDepartments();
+  }, []);
+  useEffect(() => {
+    const fetchEmployee = async () => {
+      setLoading(true);
+      try {
+        const res = await getEmployeeById(params.id);
+        if (res.status === 200) {
+          const employeeData = res.data.data;
+          setEmployee(employeeData);
+          console.log(employeeData)
+          const defaultValues = {
+            ...employeeData,
+            company: {
+              value: employeeData.company,
+              label: employeeData.company,
+            },
+            department: {
+              value: employeeData.department,
+              label: employeeData.department,
+            },
+          };
+
+          reset(defaultValues);
+        }
+      } catch (error) {
+        console.error("Error fetching employee:", error);
+        ToastArrayOfErrors(
+          error?.response?.data?.errors,
+          error?.response?.data?.message || "Failed to fetch employee"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEmployee();
+  }, [params.id, reset]);
+
+
+
+  useEffect(() => {
+    if (selectedCompany) {
+      const filteredDepartments = allDepartments
+        .filter((dept) => dept.company === selectedCompany.value)
+        .map((department) => ({
+          value: department.name,
+          label: department.name,
+        }));
+      setDepartmentOptions(filteredDepartments);
+      if (selectedCompany.value !== employee.company) {
+        setValue("department", null);
+      }
+    } else {
+      setDepartmentOptions([]);
+    }
+  }, [selectedCompany, setValue]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   if (!employee) {
     return (
       <div className="space-y-6">
         <div className="bg-white rounded-lg shadow-sm p-6 border text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Employee Not Found</h1>
-          <p className="text-gray-600 mb-4">The requested employee could not be found.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Employee Not Found
+          </h1>
+          <p className="text-gray-600 mb-4">
+            The requested employee could not be found.
+          </p>
           <Link
             href="/employees"
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
@@ -57,132 +156,113 @@ export default function EditEmployeePage() {
     );
   }
 
-  const onSubmit = async (data) => {
-    updateEmployee({
-      ...data,
-      id: employee.id,
-      companyId: data.companyId.value,
-      departmentId: data.departmentId.value
-    });
-    router.push(`/employees/${employee.id}`);
-  };
-
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="bg-white rounded-lg shadow-sm p-6 border">
         <div className="flex items-center space-x-4">
           <Link
-            href={`/employees/${employee.id}`}
+            href={`/employees/${employee.name}`}
             className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
           >
             <FiArrowLeft className="h-5 w-5" />
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Edit {employee.firstName} {employee.lastName}
+              Edit {employee.employee_name} Profile
             </h1>
             <p className="text-gray-600">Update employee information</p>
           </div>
         </div>
       </div>
 
-      {/* Form */}
       <div className="bg-white rounded-lg shadow-sm p-6 border">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                First Name *
+              <label
+                htmlFor="employee_name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Employee Name *
               </label>
               <input
-                {...register('firstName', { required: 'First name is required' })}
+                {...register("employee_name", {
+                  required: "Employee name is required",
+                })}
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter first name"
+                placeholder="Enter employee name"
               />
-              {errors.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
+              {errors.employee_name && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.employee_name.message}
+                </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                Last Name *
-              </label>
-              <input
-                {...register('lastName', { required: 'Last name is required' })}
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter last name"
-              />
-              {errors.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="email_address"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Email Address *
               </label>
               <input
-                {...register('email', { 
-                  required: 'Email is required',
+                {...register("email_address", {
+                  required: "Email is required",
                   pattern: {
                     value: /^\S+@\S+$/i,
-                    message: 'Please enter a valid email'
-                  }
+                    message: "Please enter a valid email",
+                  },
                 })}
                 type="email"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter email address"
               />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              {errors.email_address && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.email_address.message}
+                </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="mobile_number"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Phone Number *
               </label>
               <input
-                {...register('phone', { required: 'Phone number is required' })}
+                {...register("mobile_number", { required: "Phone number is required" })}
                 type="tel"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter phone number"
               />
-              {errors.phone && (
-                <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+              {errors.mobile_number && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.mobile_number.message}
+                </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-1">
-                Position *
+              <label
+                htmlFor="designation_positiontitle"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Position Title *
               </label>
               <input
-                {...register('position', { required: 'Position is required' })}
+                {...register("designation_positiontitle", { required: "Position title is required" })}
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter position"
+                placeholder="Enter position title"
               />
-              {errors.position && (
-                <p className="mt-1 text-sm text-red-600">{errors.position.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="hireDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Hire Date *
-              </label>
-              <input
-                {...register('hireDate', { required: 'Hire date is required' })}
-                type="date"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              {errors.hireDate && (
-                <p className="mt-1 text-sm text-red-600">{errors.hireDate.message}</p>
+              {errors.designation_positiontitle && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.designation_positiontitle.message}
+                </p>
               )}
             </div>
 
@@ -191,9 +271,9 @@ export default function EditEmployeePage() {
                 Company *
               </label>
               <Controller
-                name="companyId"
+                name="company"
                 control={control}
-                rules={{ required: 'Company is required' }}
+                rules={{ required: "Company is required" }}
                 render={({ field }) => (
                   <Select
                     {...field}
@@ -204,18 +284,22 @@ export default function EditEmployeePage() {
                     styles={{
                       control: (base, state) => ({
                         ...base,
-                        borderColor: state.isFocused ? '#3B82F6' : '#D1D5DB',
-                        boxShadow: state.isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.5)' : 'none',
-                        '&:hover': {
-                          borderColor: state.isFocused ? '#3B82F6' : '#9CA3AF',
+                        borderColor: state.isFocused ? "#3B82F6" : "#D1D5DB",
+                        boxShadow: state.isFocused
+                          ? "0 0 0 2px rgba(59, 130, 246, 0.5)"
+                          : "none",
+                        "&:hover": {
+                          borderColor: state.isFocused ? "#3B82F6" : "#9CA3AF",
                         },
                       }),
                     }}
                   />
                 )}
               />
-              {errors.companyId && (
-                <p className="mt-1 text-sm text-red-600">{errors.companyId.message}</p>
+              {errors.company && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.company.message}
+                </p>
               )}
             </div>
 
@@ -224,9 +308,9 @@ export default function EditEmployeePage() {
                 Department *
               </label>
               <Controller
-                name="departmentId"
+                name="department"
                 control={control}
-                rules={{ required: 'Department is required' }}
+                rules={{ required: "Department is required" }}
                 render={({ field }) => (
                   <Select
                     {...field}
@@ -238,10 +322,12 @@ export default function EditEmployeePage() {
                     styles={{
                       control: (base, state) => ({
                         ...base,
-                        borderColor: state.isFocused ? '#3B82F6' : '#D1D5DB',
-                        boxShadow: state.isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.5)' : 'none',
-                        '&:hover': {
-                          borderColor: state.isFocused ? '#3B82F6' : '#9CA3AF',
+                        borderColor: state.isFocused ? "#3B82F6" : "#D1D5DB",
+                        boxShadow: state.isFocused
+                          ? "0 0 0 2px rgba(59, 130, 246, 0.5)"
+                          : "none",
+                        "&:hover": {
+                          borderColor: state.isFocused ? "#3B82F6" : "#9CA3AF",
                         },
                       }),
                     }}
@@ -249,17 +335,21 @@ export default function EditEmployeePage() {
                 )}
               />
               {!selectedCompany && (
-                <p className="mt-1 text-sm text-gray-500">Please select a company first</p>
+                <p className="mt-1 text-sm text-gray-500">
+                  Please select a company first
+                </p>
               )}
-              {errors.departmentId && (
-                <p className="mt-1 text-sm text-red-600">{errors.departmentId.message}</p>
+              {errors.department && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.department.message}
+                </p>
               )}
             </div>
           </div>
 
           <div className="flex justify-end space-x-3">
             <Link
-              href={`/employees/${employee.id}`}
+              href={`/employees/${employee.name}`}
               className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             >
               Cancel
@@ -269,7 +359,7 @@ export default function EditEmployeePage() {
               disabled={isSubmitting}
               className="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isSubmitting ? 'Updating...' : 'Update Employee'}
+              {isSubmitting ? "Updating..." : "Update Employee"}
             </button>
           </div>
         </form>

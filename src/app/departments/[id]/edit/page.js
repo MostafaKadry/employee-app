@@ -17,12 +17,12 @@ export default function EditDepartmentPage() {
     label: company.name
   }));
 
-  const defaultCompany = companyOptions.find(option => option.value === department?.companyId);
+  const defaultCompany = companyOptions.find(option => option.value === department?.company);
 
   const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm({
     defaultValues: {
       ...department,
-      companyId: defaultCompany
+      company: defaultCompany
     }
   });
 
@@ -47,10 +47,10 @@ export default function EditDepartmentPage() {
   const onSubmit = async (data) => {
     updateDepartment({
       ...data,
-      id: department.id,
-      companyId: data.companyId.value
+      id: department.name,
+      company: data.company.value
     });
-    router.push(`/departments/${department.id}`);
+    router.push(`/departments/${department.name}`);
   };
 
   return (
@@ -95,7 +95,7 @@ export default function EditDepartmentPage() {
                 Company *
               </label>
               <Controller
-                name="companyId"
+                name="company"
                 control={control}
                 rules={{ required: 'Company is required' }}
                 render={({ field }) => (
@@ -118,27 +118,16 @@ export default function EditDepartmentPage() {
                   />
                 )}
               />
-              {errors.companyId && (
-                <p className="mt-1 text-sm text-red-600">{errors.companyId.message}</p>
+              {errors.company && (
+                <p className="mt-1 text-sm text-red-600">{errors.company.message}</p>
               )}
             </div>
 
-            <div className="md:col-span-2">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <textarea
-                {...register('description')}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter department description"
-              />
-            </div>
           </div>
 
           <div className="flex justify-end space-x-3">
             <Link
-              href={`/departments/${department.id}`}
+              href={`/departments/${department.name}`}
               className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             >
               Cancel

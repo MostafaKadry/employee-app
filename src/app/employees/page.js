@@ -1,38 +1,68 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
 import { FiPlus, FiEdit, FiTrash2, FiEye, FiSearch, FiUsers } from 'react-icons/fi';
 import Swal from 'sweetalert2';
+import { getAllEmployees, deleteEmployee } from '@/services/employee/api';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import ToastArrayOfErrors from '@/lib/ToastArrayOfErrors';
+import toast from 'react-hot-toast';
+
 
 export default function EmployeesPage() {
-  const { employees, deleteEmployee } = useApp();
+  const { dispatch } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [employees, setEmployees] = useState([]);
 
   const filteredEmployees = employees.filter(employee =>
-    `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    `${employee.employee_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.departmentName.toLowerCase().includes(searchTerm.toLowerCase())
+    employee.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    employee.department.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDelete = (employee) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `This will delete ${employee.firstName} ${employee.lastName} and cannot be undone!`,
+      text: `This will delete ${employee.employee_name} and cannot be undone!`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#EF4444',
       cancelButtonColor: '#6B7280',
       confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        deleteEmployee(employee.id);
+        const res = await deleteEmployee(employee.name);
+        if (res.status === 202) {
+          dispatch({ type: 'SET_EMPLOYEES', payload: employees.filter((employee) => employee.name !== employee.name) });
+          toast.success("Employee deleted successfully");
+        }
       }
     });
   };
-
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        setLoading(true);
+        const res = await getAllEmployees();
+        console.log(res);
+        setEmployees(res.data.data);
+        dispatch({ type: "SET_EMPLOYEES", payload: res.data.data });
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        ToastArrayOfErrors(
+          error?.response?.data?.errors,
+          error?.response?.data?.message || "Failed to fetch employees"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEmployees();
+  }, []);
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -88,7 +118,7 @@ export default function EmployeesPage() {
                     Company
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Hire Date
+                    Status
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -97,40 +127,40 @@ export default function EmployeesPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredEmployees.map((employee) => (
-                  <tr key={employee.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={employee.name} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">
-                          {employee.firstName} {employee.lastName}
+                          {employee.employee_name}
                         </div>
                         <div className="text-sm text-gray-500">{employee.email}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{employee.position}</div>
+                      <div className="text-sm text-gray-900">{employee.designation_positiontitle}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{employee.departmentName}</div>
+                      <div className="text-sm text-gray-900">{employee.department}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{employee.companyName}</div>
+                      <div className="text-sm text-gray-900">{employee.company}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {new Date(employee.hireDate).toLocaleDateString()}
+                        {employee.workflow_state}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">
                         <Link
-                          href={`/employees/${employee.id}`}
+                          href={`/employees/${employee.name}`}
                           className="text-blue-600 hover:text-blue-900 p-1 rounded transition-colors"
                           title="View"
                         >
                           <FiEye className="h-4 w-4" />
                         </Link>
                         <Link
-                          href={`/employees/${employee.id}/edit`}
+                          href={`/employees/${employee.name}/edit`}
                           className="text-green-600 hover:text-green-900 p-1 rounded transition-colors"
                           title="Edit"
                         >

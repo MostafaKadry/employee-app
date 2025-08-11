@@ -84,13 +84,13 @@ export default function DashboardPage() {
                 <div key={employee.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-900">
-                      {employee.firstName} {employee.lastName}
+                      {employee.employee_name}
                     </p>
-                    <p className="text-sm text-gray-600">{employee.position}</p>
+                    <p className="text-sm text-gray-600">{employee.designation_positiontitle}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-gray-700">{employee.companyName}</p>
-                    <p className="text-xs text-gray-500">{employee.departmentName}</p>
+                    <p className="text-sm font-medium text-gray-700">{employee.company}</p>
+                    <p className="text-xs text-gray-500">{employee.department}</p>
                   </div>
                 </div>
               ))
@@ -106,14 +106,13 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {companies.length > 0 ? (
               companies.map((company) => {
-                const companyEmployees = employees.filter(emp => emp.companyId === company.name);
-                const companyDepartments = departments.filter(dept => dept.companyId === company.name);
+                const companyEmployees = employees.filter(emp => emp.company === company.name);
+                const companyDepartments = departments.filter(dept => dept.company === company.name);
                 
                 return (
                   <div key={company.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div>
-                      <p className="font-medium text-gray-900">{company.name}</p>
-                      <p className="text-sm text-gray-600">{company.email}</p>
+                      <p className="font-medium text-gray-900">{company.company_name}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium text-gray-700">

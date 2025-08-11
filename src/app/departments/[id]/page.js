@@ -158,7 +158,7 @@ export default function ViewDepartmentPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-blue-700">
-                  {departmentEmployees.length}
+                  {department.number_of_employees}
                 </p>
                 <p className="text-sm text-blue-600">Employees</p>
               </div>
