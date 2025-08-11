@@ -26,7 +26,7 @@ export default function CreateCompanyPage() {
       console.error("Error creating company:", error);
       if (error?.response?.data?.errors instanceof Array && error?.response?.data?.errors.length > 0) {
         error?.response?.data?.errors.forEach((error) => {
-          toast.error(error.message || "Failed to create company");
+          toast.error(error.message || "Failed to create company"); 
         });
       } else {
         toast.error(error?.response?.data?._error_message || error?.response?.data?.message || "Failed to create company");

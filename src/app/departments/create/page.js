@@ -1,15 +1,44 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { useApp } from '@/context/AppContext';
 import { FiArrowLeft } from 'react-icons/fi';
 import Link from 'next/link';
 import Select from 'react-select';
+import { toast } from 'react-hot-toast';
+import ToastArrayOfErrors from '@/lib/ToastArrayOfErrors';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { createDepartment } from '@/services/departments/api';
+import { getAllCompanies } from '@/services/company/api';
 
 export default function CreateDepartmentPage() {
   const router = useRouter();
-  const { companies, addDepartment } = useApp();
+  const [companies, setCompanies] = useState([]);
   const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      setLoading(true);
+      try {
+        const res = await getAllCompanies();
+        console.log(res);
+        if (res.status === 200) {
+          setCompanies(res.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+        ToastArrayOfErrors(
+          error?.response?.data?.errors,
+          error?.response?.data?.message || "Failed to fetch companies"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCompanies();
+  }, []);
 
   const companyOptions = companies.map(company => ({
     value: company.name,
@@ -17,13 +46,28 @@ export default function CreateDepartmentPage() {
   }));
 
   const onSubmit = async (data) => {
-    addDepartment({
-      ...data,
-      companyId: data.companyId.value
-    });
-    router.push('/departments');
+    try {
+      setLoading(true);
+      const res = await createDepartment({
+        ...data,
+        company: data.company.value
+      });
+      console.log(res);
+      toast.success("Department created successfully");
+      router.push("/departments");
+    } catch (error) {
+      console.error("Error creating department:", error);
+      ToastArrayOfErrors(
+        error?.response?.data?.errors,
+        error?.response?.data?.message || "Failed to create department"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
-
+  if(loading){
+    return <LoadingSpinner />;
+  }
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -47,17 +91,17 @@ export default function CreateDepartmentPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="department_name" className="block text-sm font-medium text-gray-700 mb-1">
                 Department Name *
               </label>
               <input
-                {...register('name', { required: 'Department name is required' })}
+                {...register('department_name', { required: 'Department name is required' })}
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter department name"
               />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+              {errors.department_name && (
+                <p className="mt-1 text-sm text-red-600">{errors.department_name.message}</p>
               )}
             </div>
 
@@ -66,7 +110,7 @@ export default function CreateDepartmentPage() {
                 Company *
               </label>
               <Controller
-                name="companyId"
+                name="company"
                 control={control}
                 rules={{ required: 'Company is required' }}
                 render={({ field }) => (
@@ -89,21 +133,9 @@ export default function CreateDepartmentPage() {
                   />
                 )}
               />
-              {errors.companyId && (
-                <p className="mt-1 text-sm text-red-600">{errors.companyId.message}</p>
+              {errors.company && (
+                <p className="mt-1 text-sm text-red-600">{errors.company.message}</p>
               )}
-            </div>
-
-            <div className="md:col-span-2">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <textarea
-                {...register('description')}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter department description"
-              />
             </div>
           </div>
 

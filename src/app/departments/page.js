@@ -17,8 +17,12 @@ import {
 } from "@/services/departments/api";
 import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import ToastArrayOfErrors from "@/lib/ToastArrayOfErrors";
+import { useRouter } from "next/navigation";
+
 export default function DepartmentsPage() {
-  const { departments, deleteDepartment } = useApp();
+  const { departments, dispatch } = useApp();
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +32,7 @@ export default function DepartmentsPage() {
       department.companyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = (department) => {
+  const handleDelete = async (department) => {
     Swal.fire({
       title: "Are you sure?",
       text: `This will delete ${department.name} and cannot be undone!`,
@@ -37,12 +41,48 @@ export default function DepartmentsPage() {
       confirmButtonColor: "#EF4444",
       cancelButtonColor: "#6B7280",
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        deleteDepartment(department.id);
+        try {
+          setLoading(true);
+          const res = await deleteDepartment(department.name);
+          if (res.status === 202) {
+            toast.success("Department deleted successfully");
+            dispatch({ type: "SET_DEPARTMENTS", payload: departments.filter((department) => department.name !== department.name) });
+          }
+        } catch (error) {
+          console.log(error);
+          ToastArrayOfErrors(
+            error?.response?.data?.errors,
+            error?.response?.data?.message || "Failed to delete department"
+          );
+        }finally{
+          setLoading(false);
+        }
       }
     });
   };
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      setLoading(true);
+      try {
+        const res = await getAllDepartments();
+        if (res.status === 200) {
+          dispatch({ type: "SET_DEPARTMENTS", payload: res.data.data });
+        }
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+        ToastArrayOfErrors(
+          error?.response?.data?.errors,
+          error?.response?.data?.message || "Failed to fetch departments"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDepartments();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -93,7 +133,7 @@ export default function DepartmentsPage() {
                     Company
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Description
+                    No. of Employees
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -103,35 +143,35 @@ export default function DepartmentsPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredDepartments.map((department) => (
                   <tr
-                    key={department.id}
+                    key={department.name}
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        {department.name}
+                        {department.department_name}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {department.companyName}
+                        {department.company}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900">
-                        {department.description}
+                        {department.number_of_employees}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">
                         <Link
-                          href={`/departments/${department.id}`}
+                          href={`/departments/${department.name}`}
                           className="text-blue-600 hover:text-blue-900 p-1 rounded transition-colors"
                           title="View"
                         >
                           <FiEye className="h-4 w-4" />
                         </Link>
                         <Link
-                          href={`/departments/${department.id}/edit`}
+                          href={`/departments/${department.name}/edit`}
                           className="text-green-600 hover:text-green-900 p-1 rounded transition-colors"
                           title="Edit"
                         >
@@ -139,8 +179,9 @@ export default function DepartmentsPage() {
                         </Link>
                         <button
                           onClick={() => handleDelete(department)}
-                          className="text-red-600 hover:text-red-900 p-1 rounded transition-colors"
+                          className="text-red-600 hover:text-red-900 p-1 rounded transition-colors disabled:opacity-25"
                           title="Delete"
+                          disabled={loading}
                         >
                           <FiTrash2 className="h-4 w-4" />
                         </button>
