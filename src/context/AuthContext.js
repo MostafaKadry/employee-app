@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useReducer, useEffect } from "react";
 import toast from "react-hot-toast";
-
+import { login, logout as logoutApi } from "@/services/user/api";
 const AuthContext = createContext(null);
 
 const authReducer = (state, action) => {
@@ -47,38 +47,40 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: false });
   }, []);
 
-  const login = (credentials) => {
-    if (
-      credentials.email === "mostafakadry806@gmail.com" &&
-      credentials.password === "123"
-    ) {
-      const user = {
-        id: 1,
-        name: "Mostafa",
-        email: "mostafakadry806@gmail.com",
-        role: "Administrator",
-      };
-      localStorage.setItem("user", JSON.stringify(user));
-      dispatch({ type: "LOGIN", payload: user });
-      toast.success("Login successful!");
-      return true;
-    } else {
-      toast.error("Invalid credentials");
-      return false;
-    }
-  };
-
   const logout = () => {
     localStorage.removeItem("user");
+    logoutApi();
     dispatch({ type: "LOGOUT" });
     toast.success("Logged out successfully");
   };
 
-  return (
-    <AuthContext.Provider value={{ ...state, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = {
+    ...state,
+    login: async (credentials) => {
+      try {
+        const response = await login(credentials);
+        
+        if (response.status === 200) {
+          const user = {
+            name: response.data?.full_name,
+            email: credentials.usr,
+          };
+          localStorage.setItem("user", JSON.stringify(user));
+          dispatch({ type: "LOGIN", payload: user });
+          toast.success("Login successful!");
+          return true;
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        toast.error(error?.response?.data?.message || "Login failed");
+        return false;
+      }
+    },
+    logout,
+    dispatch,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

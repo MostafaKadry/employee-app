@@ -14,7 +14,7 @@ export default function CreateEmployeePage() {
   const selectedCompany = watch('companyId');
   
   const companyOptions = companies.map(company => ({
-    value: company.id,
+    value: company.name,
     label: company.name
   }));
 

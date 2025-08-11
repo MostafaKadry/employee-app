@@ -106,11 +106,11 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {companies.length > 0 ? (
               companies.map((company) => {
-                const companyEmployees = employees.filter(emp => emp.companyId === company.id);
-                const companyDepartments = departments.filter(dept => dept.companyId === company.id);
+                const companyEmployees = employees.filter(emp => emp.companyId === company.name);
+                const companyDepartments = departments.filter(dept => dept.companyId === company.name);
                 
                 return (
-                  <div key={company.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={company.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div>
                       <p className="font-medium text-gray-900">{company.name}</p>
                       <p className="text-sm text-gray-600">{company.email}</p>

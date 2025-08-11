@@ -12,7 +12,7 @@ export default function CreateDepartmentPage() {
   const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm();
 
   const companyOptions = companies.map(company => ({
-    value: company.id,
+    value: company.name,
     label: company.name
   }));
 

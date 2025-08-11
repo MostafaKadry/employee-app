@@ -13,7 +13,7 @@ export default function EditEmployeePage() {
   const employee = employees.find(e => e.id === parseInt(params.id));
 
   const companyOptions = companies.map(company => ({
-    value: company.id,
+    value: company.name,
     label: company.name
   }));
 
@@ -23,7 +23,7 @@ export default function EditEmployeePage() {
     defaultValues: {
       ...employee,
       companyId: defaultCompany,
-      departmentId: departments.find(d => d.id === employee?.departmentId) ? {
+      departmentId: departments.find(d => d.name === employee?.departmentId) ? {
         value: employee.departmentId,
         label: employee.departmentName
       } : null
@@ -35,7 +35,7 @@ export default function EditEmployeePage() {
   const departmentOptions = departments
     .filter(dept => !selectedCompany || dept.companyId === selectedCompany.value)
     .map(department => ({
-      value: department.id,
+      value: department.name,
       label: department.name
     }));
 

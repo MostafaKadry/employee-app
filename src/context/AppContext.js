@@ -14,13 +14,13 @@ const appReducer = (state, action) => {
       return {
         ...state,
         companies: state.companies.map(company =>
-          company.id === action.payload.id ? action.payload : company
+          company.name === action.payload.name ? action.payload : company
         ),
       };
     case 'DELETE_COMPANY':
       return {
         ...state,
-        companies: state.companies.filter(company => company.id !== action.payload),
+        companies: state.companies.filter(company => company.name !== action.payload),
       };
     
     case 'SET_DEPARTMENTS':
@@ -63,13 +63,10 @@ const appReducer = (state, action) => {
 };
 
 const initialState = {
-  companies: [
-    { id: 1, name: 'Tech Corp', address: '123 Tech Street', phone: '+1234567890', email: 'contact@techcorp.com' },
-    { id: 2, name: 'Innovation Ltd', address: '456 Innovation Ave', phone: '+1987654321', email: 'info@innovation.com' },
-  ],
+  companies: [],
   departments: [
-    { id: 1, name: 'Engineering', description: 'Software development team', companyId: 1, companyName: 'Tech Corp' },
-    { id: 2, name: 'Marketing', description: 'Marketing and sales team', companyId: 1, companyName: 'Tech Corp' },
+    { name: 'Engineering', description: 'Software development team', companyId: 1, companyName: 'Tech Corp' },
+    { name: 'Marketing', description: 'Marketing and sales team', companyId: 1, companyName: 'Tech Corp' },
     { id: 3, name: 'HR', description: 'Human resources department', companyId: 2, companyName: 'Innovation Ltd' },
   ],
   employees: [
@@ -119,6 +116,9 @@ export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   // Company actions
+  const setCompanies = (companies) => {
+    dispatch({ type: 'SET_COMPANIES', payload: companies });
+  };
   const addCompany = (company) => {
     const newCompany = { ...company, id: Date.now() };
     dispatch({ type: 'ADD_COMPANY', payload: newCompany });
@@ -205,6 +205,7 @@ export const AppProvider = ({ children }) => {
       addEmployee,
       updateEmployee,
       deleteEmployee,
+      dispatch,
     }}>
       {children}
     </AppContext.Provider>

@@ -10,10 +10,10 @@ export default function EditDepartmentPage() {
   const params = useParams();
   const router = useRouter();
   const { companies, departments, updateDepartment } = useApp();
-  const department = departments.find(d => d.id === parseInt(params.id));
+  const department = departments.find(d => d.name === params.id);
   
   const companyOptions = companies.map(company => ({
-    value: company.id,
+    value: company.name,
     label: company.name
   }));
 
@@ -59,7 +59,7 @@ export default function EditDepartmentPage() {
       <div className="bg-white rounded-lg shadow-sm p-6 border">
         <div className="flex items-center space-x-4">
           <Link
-            href={`/departments/${department.id}`}
+            href={`/departments/${department.name}`}
             className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
           >
             <FiArrowLeft className="h-5 w-5" />
