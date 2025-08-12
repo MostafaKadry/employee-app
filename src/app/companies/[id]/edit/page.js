@@ -22,9 +22,9 @@ export default function EditCompanyPage() {
       try {
         setLoading(true);
         const response = await getCompanyById(params.id);
-        console.log(response.data.data.name);
-        setCompany(response.data.data);
-        reset(response.data.data);
+        console.log(response.data.message.name);
+        setCompany(response.data.message);
+        reset(response.data.message);
       } catch (error) {
         console.error('Error fetching company:', error);
       } finally {
@@ -62,14 +62,13 @@ export default function EditCompanyPage() {
     try {
       setLoading(true);
       const res = await updateCompany({name: data.name, company_name: data.company_name});
-      setCompany(res.data.data);
-      reset(res.data.data);
+      setCompany(res.data.message);
+      reset(res.data.message);
       console.log(res);
       toast.success('Company updated successfully');
       // router.push(`/companies/${company.name}`);
     } catch (error) {
       console.error('Error updating company:', error);
-      console.log(typeof error?.response?.data?.errors)
       if (error?.response?.data?.errors instanceof Array && error?.response?.data?.errors.length > 0) {
         error?.response?.data?.errors.forEach((error) => {
           toast.error(error.message || 'Failed to update company');

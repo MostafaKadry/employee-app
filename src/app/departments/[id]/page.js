@@ -24,7 +24,7 @@ export default function ViewDepartmentPage() {
         const res = await getDepartmentById(params.id);
         console.log(res);
         if (res.status === 200) {
-          setDepartment(res.data.data);
+          setDepartment(res.data.message);
         }
       } catch (error) {
         console.error("Error fetching department:", error);
@@ -46,7 +46,7 @@ export default function ViewDepartmentPage() {
         const res = await getAllEmployees();
         console.log(res);
         if (res.status === 200) {
-          setEmployees(res.data.data);
+          setEmployees(res.data.message);
         }
       } catch (error) {
         console.error("Error fetching employees:", error);
@@ -87,7 +87,7 @@ export default function ViewDepartmentPage() {
     );
   }
 
-  const departmentEmployees = employees.filter(
+  const departmentEmployees = employees?.filter(
     (e) => e.department === department.name
   );
   console.log(employees);
@@ -175,9 +175,9 @@ export default function ViewDepartmentPage() {
           </h2>
         </div>
         <div className="p-6">
-          {departmentEmployees.length > 0 ? (
+          {departmentEmployees?.length > 0 ? (
             <div className="space-y-3">
-              {departmentEmployees.map((employee) => (
+              {departmentEmployees?.map((employee) => (
                 <div
                   key={employee.name}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"

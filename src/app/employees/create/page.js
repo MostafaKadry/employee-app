@@ -1,17 +1,28 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
-import { useApp } from '@/context/AppContext';
 import { FiArrowLeft } from 'react-icons/fi';
 import Link from 'next/link';
 import Select from 'react-select';
+import { createEmployee } from '@/services/employee/api';
+import { getAllCompanies } from "@/services/company/api";
+import { getAllDepartments } from "@/services/departments/api";
+import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import ToastArrayOfErrors from '@/lib/ToastArrayOfErrors';
+
+
+
 
 export default function CreateEmployeePage() {
   const router = useRouter();
-  const { companies, departments, addEmployee } = useApp();
+  const [companies, setCompanies] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const { register, handleSubmit, control, watch, formState: { errors, isSubmitting } } = useForm();
+  const [loading, setLoading] = useState(false);
 
-  const selectedCompany = watch('companyId');
+  const selectedCompany = watch('company');
   
   const companyOptions = companies.map(company => ({
     value: company.name,
@@ -19,20 +30,61 @@ export default function CreateEmployeePage() {
   }));
 
   const departmentOptions = departments
-    .filter(dept => !selectedCompany || dept.companyId === selectedCompany.value)
+    .filter(dept => !selectedCompany || dept.company === selectedCompany.value)
     .map(department => ({
-      value: department.id,
+      value: department.name,
       label: department.name
     }));
 
   const onSubmit = async (data) => {
-    addEmployee({
-      ...data,
-      companyId: data.companyId.value,
-      departmentId: data.departmentId.value
-    });
-    router.push('/employees');
+    setLoading(true);
+    try {
+      await createEmployee({
+        ...data,
+        company: data.company.value,
+        department: data.department.value
+      });
+      toast.success('Employee created successfully');
+      router.push('/employees');
+    } catch (error) {
+      ToastArrayOfErrors(error, error.response?.data.exception || error.response?.data.message || "Failed to create employee");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    const fetchCompaniesAndDepartments = async () => {
+      setLoading(true);
+      try {
+        const [companiesRes, departmentsRes] = await Promise.all([
+          getAllCompanies(),
+          getAllDepartments(),
+        ]);
+        if (companiesRes.status === 200) {
+          setCompanies(companiesRes.data.message);
+        }
+        if (departmentsRes.status === 200) {
+          setDepartments(departmentsRes.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        ToastArrayOfErrors(
+          error?.response?.data?.errors,
+          error.response?.data.exception ||
+            error?.response?.data?.message || "Failed to fetch companies and departments"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCompaniesAndDepartments();
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
 
   return (
     <div className="space-y-6">
@@ -72,11 +124,11 @@ export default function CreateEmployeePage() {
             </div>
 
             <div>
-              <label htmlFor="employee_email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email_address" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address *
               </label>
               <input
-                {...register('employee_email', { 
+                {...register('email_address', { 
                   required: 'Email is required',
                   pattern: {
                     value: /^\S+@\S+$/i,
@@ -87,23 +139,23 @@ export default function CreateEmployeePage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter email address"
               />
-              {errors.employee_email && (
-                <p className="mt-1 text-sm text-red-600">{errors.employee_email.message}</p>
+              {errors.email_address && (
+                <p className="mt-1 text-sm text-red-600">{errors.email_address.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="employee_phone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="mobile_number" className="block text-sm font-medium text-gray-700 mb-1">
                 Phone Number *
               </label>
               <input
-                {...register('employee_phone', { required: 'Phone number is required' })}
+                {...register('mobile_number', { required: 'Phone number is required' })}
                 type="tel"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter phone number"
               />
-              {errors.employee_phone && (
-                <p className="mt-1 text-sm text-red-600">{errors.employee_phone.message}</p>
+              {errors.mobile_number && (
+                <p className="mt-1 text-sm text-red-600">{errors.mobile_number.message}</p>
               )}
             </div>
 
@@ -119,6 +171,20 @@ export default function CreateEmployeePage() {
               />
               {errors.designation_positiontitle && (
                 <p className="mt-1 text-sm text-red-600">{errors.designation_positiontitle.message}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                Address *
+              </label>
+              <input
+                {...register('address', { required: 'Address is required' })}
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter address"
+              />
+              {errors.address && (
+                <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>
               )}
             </div>
 

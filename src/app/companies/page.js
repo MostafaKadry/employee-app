@@ -30,7 +30,7 @@ export default function CompaniesPage() {
         const res = await deleteCompany(company.name);
         console.log(res);
         if (res.status === 200) {
-          dispatch({ type: 'SET_COMPANIES', payload: res.data.data });
+          dispatch({ type: 'SET_COMPANIES', payload: res.data.message });
           console.log(companies);
         }
       }
@@ -44,7 +44,7 @@ export default function CompaniesPage() {
         const res = await getAllCompanies();
         console.log(res);
         if (res.status === 200) {
-          dispatch({ type: 'SET_COMPANIES', payload: res.data.data });
+          dispatch({ type: 'SET_COMPANIES', payload: res.data.message });
           console.log(companies);
         }
       } catch (error) {

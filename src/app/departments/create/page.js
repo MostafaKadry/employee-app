@@ -25,7 +25,7 @@ export default function CreateDepartmentPage() {
         const res = await getAllCompanies();
         console.log(res);
         if (res.status === 200) {
-          setCompanies(res.data.data);
+          setCompanies(res.data.message);
         }
       } catch (error) {
         console.error("Error fetching companies:", error);

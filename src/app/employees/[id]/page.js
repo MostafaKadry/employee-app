@@ -19,7 +19,7 @@ export default function ViewEmployeePage() {
         const res = await getEmployeeById(params.id);
         console.log(res);
         if (res.status === 200) {
-          setEmployee(res.data.data);
+          setEmployee(res.data.message);
         }
       } catch (error) {
         console.error("Error fetching employee:", error);
@@ -162,7 +162,7 @@ export default function ViewEmployeePage() {
           </div>
           <div className="bg-green-50 rounded-lg p-4">
             <p className="text-sm font-medium text-green-700">Status</p>
-            <p className="text-2xl font-bold text-green-700">{employee.workflow_state}</p>
+            <p className="text-2xl font-bold text-green-700">{employee.status}</p>
           </div>
           <div className="bg-purple-50 rounded-lg p-4">
             <p className="text-sm font-medium text-purple-700">Employee ID</p>

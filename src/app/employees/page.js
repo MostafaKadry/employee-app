@@ -36,8 +36,9 @@ export default function EmployeesPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const res = await deleteEmployee(employee.name);
-        if (res.status === 202) {
-          dispatch({ type: 'SET_EMPLOYEES', payload: employees.filter((employee) => employee.name !== employee.name) });
+        console.log(res);
+        if (res.status === 200) {
+          dispatch({ type: 'SET_EMPLOYEES', payload: employees.filter((emp) => emp.name !== employee.name) });
           toast.success("Employee deleted successfully");
         }
       }
@@ -49,8 +50,8 @@ export default function EmployeesPage() {
         setLoading(true);
         const res = await getAllEmployees();
         console.log(res);
-        setEmployees(res.data.data);
-        dispatch({ type: "SET_EMPLOYEES", payload: res.data.data });
+        setEmployees(res.data.message);
+        dispatch({ type: "SET_EMPLOYEES", payload: res.data.message });
       } catch (error) {
         console.error("Error fetching employees:", error);
         ToastArrayOfErrors(
@@ -147,7 +148,7 @@ export default function EmployeesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {employee.workflow_state}
+                        {employee.status}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

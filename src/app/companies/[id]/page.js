@@ -17,8 +17,8 @@ export default function ViewCompanyPage() {
       try {
         setLoading(true);
         const response = await getCompanyById(params.id);
-        console.log(response.data.data.name);
-        setCompany(response.data.data);
+        console.log(response.data.message);
+        setCompany(response.data.message);
       } catch (error) {
         console.error('Error fetching company:', error);
       } finally {

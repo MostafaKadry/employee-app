@@ -69,7 +69,7 @@ export default function DepartmentsPage() {
       try {
         const res = await getAllDepartments();
         if (res.status === 200) {
-          dispatch({ type: "SET_DEPARTMENTS", payload: res.data.data });
+          dispatch({ type: "SET_DEPARTMENTS", payload: res.data.message });
         }
       } catch (error) {
         console.error("Error fetching departments:", error);

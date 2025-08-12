@@ -11,7 +11,7 @@ import ToastArrayOfErrors from "@/lib/ToastArrayOfErrors";
 import { getEmployeeById, updateEmployee } from "@/services/employee/api";
 import { getAllCompanies } from "@/services/company/api";
 import { getAllDepartments } from "@/services/departments/api";
-
+import toast from "react-hot-toast";
 export default function EditEmployeePage() {
   const params = useParams();
   const router = useRouter();
@@ -41,13 +41,39 @@ export default function EditEmployeePage() {
   const selectedCompany = watch("company");
 
   const onSubmit = async (data) => {
-    updateEmployee({
+    console.log({
       ...data,
-      id: employee.name,
+      name: employee.name,
       company: data.company.value,
       department: data.department.value,
     });
-    router.push(`/employees/${employee.name}`);
+    try {
+      setLoading(true);
+      const { status, hired_on, days_employed, ...allowedData } = data;
+
+      const res = await updateEmployee({
+        ...allowedData,
+        name: employee.name,
+        company: data.company.value,
+        department: data.department.value,
+      });
+
+      console.log(res);
+      if (res.status === 200) {
+        toast.success("Employee updated successfully");
+        router.push(`/employees/${employee.name}`);
+      }
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      ToastArrayOfErrors(
+        error?.response?.data?.errors,
+        error.response?.data.exception ||
+          error?.response?.data?.message || "Failed to update employee"
+      );
+    } finally {
+      setLoading(false);
+    }
+
   };
   useEffect(() => {
     const fetchCompaniesAndDepartments = async () => {
@@ -58,16 +84,17 @@ export default function EditEmployeePage() {
           getAllDepartments(),
         ]);
         if (companiesRes.status === 200) {
-          setCompanies(companiesRes.data.data);
+          setCompanies(companiesRes.data.message);
         }
         if (departmentsRes.status === 200) {
-          setAllDepartments(departmentsRes.data.data);
+          setAllDepartments(departmentsRes.data.message);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
         ToastArrayOfErrors(
           error?.response?.data?.errors,
-          error?.response?.data?.message || "Failed to fetch companies and departments"
+          error.response?.data.exception ||
+            error?.response?.data?.message || "Failed to fetch companies and departments"
         );
       } finally {
         setLoading(false);
@@ -75,17 +102,21 @@ export default function EditEmployeePage() {
     };
     fetchCompaniesAndDepartments();
   }, []);
+
   useEffect(() => {
     const fetchEmployee = async () => {
       setLoading(true);
       try {
         const res = await getEmployeeById(params.id);
         if (res.status === 200) {
-          const employeeData = res.data.data;
+          const employeeData = res.data.message;
           setEmployee(employeeData);
-          console.log(employeeData)
           const defaultValues = {
-            ...employeeData,
+            address: employeeData.address,
+            email_address: employeeData.email_address,
+            employee_name: employeeData.employee_name,
+            mobile_number: employeeData.mobile_number,
+            designation_positiontitle: employeeData.designation_positiontitle,
             company: {
               value: employeeData.company,
               label: employeeData.company,
@@ -95,7 +126,8 @@ export default function EditEmployeePage() {
               label: employeeData.department,
             },
           };
-
+          
+         
           reset(defaultValues);
         }
       } catch (error) {
@@ -109,8 +141,8 @@ export default function EditEmployeePage() {
       }
     };
     fetchEmployee();
+    
   }, [params.id, reset]);
-
 
 
   useEffect(() => {
@@ -122,7 +154,7 @@ export default function EditEmployeePage() {
           label: department.name,
         }));
       setDepartmentOptions(filteredDepartments);
-      if (selectedCompany.value !== employee.company) {
+      if (selectedCompany.value !== employee?.company) {
         setValue("department", null);
       }
     } else {
@@ -265,7 +297,25 @@ export default function EditEmployeePage() {
                 </p>
               )}
             </div>
-
+              <div>
+                <label 
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Address *
+                </label>
+                <input
+                  {...register("address", { required: "Address is required" })}
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter address"
+                />
+                {errors.address && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.address.message}
+                  </p>
+                )}
+              </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Company *
