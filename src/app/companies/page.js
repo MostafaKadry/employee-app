@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useApp } from '@/context/AppContext';
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiSearch } from 'react-icons/fi';
 import { getAllCompanies, deleteCompany } from '@/services/company/api';
 import toast from 'react-hot-toast';
@@ -9,12 +8,11 @@ import Swal from 'sweetalert2';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { FaBuilding } from "react-icons/fa";
 export default function CompaniesPage() {
-  const { companies, dispatch } = useApp();
+ const [companies, setCompanies] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   console.log(companies);
-  const filteredCompanies = companies?.filter(company =>
-    company?.name?.toLowerCase().includes(searchTerm.toLowerCase())  );
+  const [filteredCompanies, setFilteredCompanies] = useState([]) 
 
   const handleDelete = async (company) => {
     Swal.fire({
@@ -30,8 +28,8 @@ export default function CompaniesPage() {
         const res = await deleteCompany(company.name);
         console.log(res);
         if (res.status === 200) {
-          dispatch({ type: 'SET_COMPANIES', payload: res.data.message });
-          console.log(companies);
+          setFilteredCompanies(filteredCompanies?.filter((company) => company.name !== company.name)); 
+          console.log(filteredCompanies);
         }
       }
     });
@@ -44,7 +42,9 @@ export default function CompaniesPage() {
         const res = await getAllCompanies();
         console.log(res);
         if (res.status === 200) {
-          dispatch({ type: 'SET_COMPANIES', payload: res.data.message });
+          setCompanies(res.data.message);
+          setFilteredCompanies(res.data.message?.filter(company =>
+            company?.name?.toLowerCase().includes(searchTerm.toLowerCase())));
           console.log(companies);
         }
       } catch (error) {
@@ -55,7 +55,7 @@ export default function CompaniesPage() {
       }
     };
     fetchCompanies();
-  }, []);
+  }, [searchTerm]);
 
   return (
     <div className="space-y-6">

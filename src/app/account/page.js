@@ -5,7 +5,7 @@ import { FiEdit, FiUser, FiMail, FiShield } from 'react-icons/fi';
 
 export default function AccountPage() {
   const { user } = useAuth();
-
+  console.log(user);
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -63,7 +63,7 @@ export default function AccountPage() {
               <p className="text-sm text-blue-600">Status</p>
             </div>
             <div className="bg-green-50 rounded-lg p-4">
-              <p className="text-2xl font-bold text-green-700">{user?.id}</p>
+              <p className="text-2xl font-bold text-green-700">{user?.name}</p>
               <p className="text-sm text-green-600">User ID</p>
             </div>
           </div>

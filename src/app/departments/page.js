@@ -26,11 +26,11 @@ export default function DepartmentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const filteredDepartments = departments.filter(
+  const filteredDepartments = departments.length > 0 ? departments.filter(
     (department) =>
       department.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       department.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   const handleDelete = async (department) => {
     Swal.fire({

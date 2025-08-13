@@ -1,36 +1,197 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Employee Management Application
 
-## Getting Started
+A comprehensive employee management system built with Next.js, React, and Tailwind CSS. This application allows organizations to manage companies, departments, and employees with a clean, intuitive user interface.
 
-First, run the development server:
+![Dashboard Preview](/images/dashboard-preview.png)
+
+## 📸 Screenshots
+
+| Dashboard | Companies | Departments | Employees |
+|-----------|-----------|-------------|-----------|
+| ![Dashboard](/images/dashboard.png) | ![Companies](/images/company.png) | ![Departments](/images/departments.png) | ![Employees](/images/employees.png) |
+
+## 🚀 Features
+
+- **Company Management**: Create, view, edit, and delete company records
+- **Department Management**: Organize departments within companies
+- **Employee Directory**: Manage employee information and assignments
+- **User Authentication**: Secure access control with role-based permissions
+- **Responsive Design**: Works on desktop and mobile devices
+- **Modern UI**: Built with Tailwind CSS for a clean, professional look
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 13+ (App Router)
+- **Styling**: Tailwind CSS
+- **State Management**: React Context API
+- **Form Handling**: React Hook Form
+- **HTTP Client**: Axios
+- **Notifications**: React Hot Toast
+- **UI Components**: React Icons, React Select
+- **Deployment**: Vercel (recommended)
+
+## 📋 Prerequisites
+
+- Node.js 18.0.0 or later
+- npm or yarn package manager
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone [your-repository-url]
+cd employee-app
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Environment Setup
+
+Create a `.env.local` file in the root directory and add your environment variables:
+
+```env
+NEXT_PUBLIC_API_URL=your_api_url_here
+# Add other environment variables as needed
+```
+
+### 4. Add Screenshots (Optional)
+
+To add screenshots to your project:
+
+1. Place your screenshot images in the `public/images/` directory
+2. Use the following format to include them in the README:
+   ```markdown
+   ![Description of image](/images/your-image.png)
+   ```
+
+### 5. Run the Development Server
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🏗️ Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # App router pages
+│   ├── account/           # User account management
+│   ├── companies/         # Company management
+│   ├── departments/       # Department management
+│   ├── employees/         # Employee management
+│   └── dashboard/         # Main dashboard
+├── components/            # Reusable UI components
+├── context/               # React context providers
+└── services/              # API service layer
+```
 
-## Learn More
+## 🔐 Authentication & Authorization
 
-To learn more about Next.js, take a look at the following resources:
+The application implements role-based access control (RBAC) with the following roles:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Admin**: Full access to all features
+- **Manager**: Can manage departments and employees within their company
+- **Employee**: Limited to viewing their own information
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📚 API Documentation
 
-## Deploy on Vercel
+### Authentication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/logout` - User logout
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Companies
+
+- `GET /api/companies` - List all companies
+- `POST /api/companies` - Create new company
+- `GET /api/companies/:id` - Get company details
+- `PUT /api/companies/:id` - Update company
+- `DELETE /api/companies/:id` - Delete company
+
+### Departments
+
+- `GET /api/departments` - List all departments
+- `POST /api/departments` - Create new department
+- `GET /api/departments/:id` - Get department details
+- `PUT /api/departments/:id` - Update department
+- `DELETE /api/departments/:id` - Delete department
+
+### Employees
+
+- `GET /api/employees` - List all employees
+- `POST /api/employees` - Create new employee
+- `GET /api/employees/:id` - Get employee details
+- `PUT /api/employees/:id` - Update employee
+- `DELETE /api/employees/:id` - Delete employee
+
+## ✅ Check List
+
+- [x] User authentication and authorization
+- [x] Company management (CRUD)
+- [x] Department management (CRUD)
+- [x] Employee management (CRUD)
+- [x] Responsive design
+- [x] Form validation
+- [x] Error handling
+- [x] Loading states
+- [x] Toast notifications
+
+## 🔒 Security Considerations
+
+- Role-based access control (RBAC)
+- Protected API routes
+- Secure password hashing
+- CSRF protection
+- Input validation and sanitization
+- Secure HTTP headers
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to a GitHub/GitLab/Bitbucket repository
+2. Import the project on Vercel
+3. Add your environment variables
+4. Deploy!
+
+### Other Platforms
+
+Build the application for production:
+
+```bash
+npm run build
+```
+
+Then start the production server:
+
+```bash
+npm start
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Next.js Team
+- React Team
+- Tailwind CSS Team
+- All open-source contributors

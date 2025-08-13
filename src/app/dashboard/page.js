@@ -1,9 +1,25 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { FiBriefcase, FiUsers, FiTrendingUp } from 'react-icons/fi';
 import { BsBuildingFill } from "react-icons/bs";
+import LoadingSpinner from '@/components/LoadingSpinner';
+import toast from 'react-hot-toast';
+import ToastArrayOfErrors from '@/lib/ToastArrayOfErrors';
+import { getAllCompanies } from '@/services/company/api';
+import {getDepartmentsCount} from '@/services/departments/api'
+import {  getEmployeesCount } from '@/services/employee/api';
+import { getRecentlyHiredEmployees } from '@/services/dashboard/api';
+
+
 export default function DashboardPage() {
-  const { companies, departments, employees } = useApp();
+  const { dispatch } = useApp();
+  const [loading, setLoading] = useState(true);
+  const [companies, setCompanies] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [departmentsCount, setDepartmentsCount] = useState(0);
+  const [companiesCount, setCompaniesCount] = useState(0);
+  const [employeesCount, setEmployeesCount] = useState(0);
 
   const stats = [
     {
@@ -16,7 +32,7 @@ export default function DashboardPage() {
     },
     {
       name: 'Total Departments',
-      value: departments.length,
+      value: departmentsCount,
       icon: FiBriefcase,
       color: 'bg-green-500',
       bgColor: 'bg-green-50',
@@ -24,7 +40,7 @@ export default function DashboardPage() {
     },
     {
       name: 'Total Employees',
-      value: employees.length,
+      value: employeesCount,
       icon: FiUsers,
       color: 'bg-purple-500',
       bgColor: 'bg-purple-50',
@@ -32,7 +48,7 @@ export default function DashboardPage() {
     },
     {
       name: 'Avg Employees/Company',
-      value: companies.length > 0 ? Math.round(employees.length / companies.length) : 0,
+      value: companies.length > 0 ? Math.round(employeesCount / companies.length) : 0,
       icon: FiTrendingUp,
       color: 'bg-orange-500',
       bgColor: 'bg-orange-50',
@@ -40,7 +56,87 @@ export default function DashboardPage() {
     },
   ];
 
-  const recentEmployees = employees.slice(-5).reverse();
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const res = await getAllCompanies();
+        console.log(res)
+        if (res.status === 200) {
+          dispatch({ type: 'SET_COMPANIES', payload: res.data });
+          setCompanies(res.data.message);
+        }
+      } catch (error) {
+        ToastArrayOfErrors(error, 
+          error?.response?.data?.message||
+          error?.response?.data?.exception||
+          "Failed to fetch employees"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    const fetchDepartments = async () => {
+      try {
+        const res = await getDepartmentsCount();
+       
+        console.log(res)
+        if (res.status === 200) {
+          setDepartmentsCount(res.data.data.total_departments);
+        }
+      } catch (error) {
+        console.log(error)
+        ToastArrayOfErrors(error, 
+          error?.response?.data?.message||
+          error?.response?.data?.exception||
+          "Failed to fetch employees"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    const fetchEmployees = async () => {
+      try {
+        const res = await getRecentlyHiredEmployees();
+        console.log(res.data.data)
+        if (res.status === 200) {
+          setEmployees(res.data.data);
+        }
+      } catch (error) {
+        console.log(error)
+        ToastArrayOfErrors(error, 
+          error?.response?.data?.message||
+          error?.response?.data?.exception||
+          "Failed to fetch employees"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    const fetchEmployeesCount = async () => {
+      try {
+        const res = await getEmployeesCount();
+        console.log(res)
+        if (res.status === 200) {
+          setEmployeesCount(res.data.data.total_employees);
+        }
+      } catch (error) {
+        console.log(error)
+        ToastArrayOfErrors(error, 
+          error?.response?.data?.message||
+          error?.response?.data?.exception||
+          "Failed to fetch employees"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCompanies();
+    fetchDepartments();
+    fetchEmployees();
+    fetchEmployeesCount();
+  }, []);
+
+  if (loading) return <LoadingSpinner />
 
   return (
     <div className="space-y-6">
@@ -79,9 +175,9 @@ export default function DashboardPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 border">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Employees</h2>
           <div className="space-y-3">
-            {recentEmployees.length > 0 ? (
-              recentEmployees.map((employee) => (
-                <div key={employee.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            {employees.length > 0 ? (
+              employees.map((employee) => (
+                <div key={employee.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-900">
                       {employee.employee_name}
@@ -106,9 +202,7 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {companies.length > 0 ? (
               companies.map((company) => {
-                const companyEmployees = employees.filter(emp => emp.company === company.name);
-                const companyDepartments = departments.filter(dept => dept.company === company.name);
-                
+               
                 return (
                   <div key={company.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div>
@@ -116,10 +210,10 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium text-gray-700">
-                        {companyEmployees.length} Employees
+                        {company.number_of_employees} Employees
                       </p>
                       <p className="text-xs text-gray-500">
-                        {companyDepartments.length} Departments
+                        {company.number_of_departments} Departments
                       </p>
                     </div>
                   </div>

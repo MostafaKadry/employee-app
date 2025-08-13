@@ -7,7 +7,7 @@ const ToastArrayOfErrors = (errors, message) => {
       }
     });
   } else {
-    toast.error(message);
+    toast.error(errors?.response?.data?.message || errors?.response?.data?.exception || message);
     return null;
   }
 };

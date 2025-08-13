@@ -2,18 +2,19 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useApp } from "@/context/AppContext";
 import { FiArrowLeft, FiEdit, FiUsers } from "react-icons/fi";
 import { FaBuilding } from "react-icons/fa";
-import { getDepartmentById } from "@/services/departments/api";
-import { getAllEmployees } from "@/services/employee/api";
+import {
+  getDepartmentById,
+  getDepartmentRelatedEmployees,
+} from "@/services/departments/api";
+
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ToastArrayOfErrors from "@/lib/ToastArrayOfErrors";
 
 export default function ViewDepartmentPage() {
   const params = useParams();
   const [loading, setLoading] = useState(false);
-  const { dispatch } = useApp();
   const [department, setDepartment] = useState(null);
   const [employees, setEmployees] = useState([]);
 
@@ -22,14 +23,20 @@ export default function ViewDepartmentPage() {
       setLoading(true);
       try {
         const res = await getDepartmentById(params.id);
+        const employeesRes = await getDepartmentRelatedEmployees(params.id);
         console.log(res);
+        console.log(employeesRes);
         if (res.status === 200) {
           setDepartment(res.data.message);
+        }
+        if (employeesRes.status === 200) {
+          setEmployees(employeesRes.data.message);
         }
       } catch (error) {
         console.error("Error fetching department:", error);
         ToastArrayOfErrors(
           error?.response?.data?.errors,
+          error?.response?.data?.exception ||
           error?.response?.data?.message || "Failed to fetch department"
         );
       } finally {
@@ -37,28 +44,6 @@ export default function ViewDepartmentPage() {
       }
     };
     fetchDepartment();
-  }, [params.id]);
-
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      setLoading(true);
-      try {
-        const res = await getAllEmployees();
-        console.log(res);
-        if (res.status === 200) {
-          setEmployees(res.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-        ToastArrayOfErrors(
-          error?.response?.data?.errors,
-          error?.response?.data?.message || "Failed to fetch employees"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEmployees();
   }, [params.id]);
 
   if (loading) {
@@ -86,12 +71,6 @@ export default function ViewDepartmentPage() {
       </div>
     );
   }
-
-  const departmentEmployees = employees?.filter(
-    (e) => e.department === department.name
-  );
-  console.log(employees);
-  console.log(departmentEmployees);
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -175,27 +154,31 @@ export default function ViewDepartmentPage() {
           </h2>
         </div>
         <div className="p-6">
-          {departmentEmployees?.length > 0 ? (
+          {employees?.length > 0 ? (
             <div className="space-y-3">
-              {departmentEmployees?.map((employee) => (
+              {employees?.map((employee) => (
                 <div
                   key={employee.name}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
                 >
                   <div>
                     <p className="font-medium text-gray-900">
-                      {employee.employee_name} 
+                      {employee.employee_name}
                     </p>
-                    <p className="text-sm text-gray-600">{employee.designation_positiontitle}</p>
+                    <p className="text-sm text-gray-600">
+                      {employee.designation_positiontitle}
+                    </p>
                     <p className="text-sm text-gray-600">{employee.company}</p>
-                    <p className="text-sm text-gray-500">{employee.mobile_number}</p>
+                    <p className="text-sm text-gray-500">
+                      {employee.mobile_number}
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-gray-700">
                       Hire Date
                     </p>
                     <p className="text-sm text-gray-600">
-                      {(employee.days_employed)}
+                      {employee.days_employed}
                     </p>
                     <Link
                       href={`/employees/${employee.name}`}

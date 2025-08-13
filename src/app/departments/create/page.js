@@ -31,7 +31,9 @@ export default function CreateDepartmentPage() {
         console.error("Error fetching companies:", error);
         ToastArrayOfErrors(
           error?.response?.data?.errors,
-          error?.response?.data?.message || "Failed to fetch companies"
+          error?.response?.data?.message ||
+          error?.response?.data?.exception ||
+          "Failed to fetch companies"
         );
       } finally {
         setLoading(false);

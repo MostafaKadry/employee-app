@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
 import { FiArrowLeft, FiEdit } from 'react-icons/fi';
 import { getCompanyById } from '@/services/company/api';
+
 import LoadingSpinner from '@/components/LoadingSpinner';
 export default function ViewCompanyPage() {
   const params = useParams();
