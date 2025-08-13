@@ -57,14 +57,15 @@ export default function ViewEmployeePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 px-2 sm:px-0 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center space-x-3">
             <Link
               href="/employees"
-              className="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              className="p-2 -ml-2 sm:ml-0 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              aria-label="Back to employees"
             >
               <FiArrowLeft className="h-5 w-5" />
             </Link>
@@ -85,9 +86,9 @@ export default function ViewEmployeePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Personal Information */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h2>
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
@@ -122,7 +123,7 @@ export default function ViewEmployeePage() {
         </div>
 
         {/* Work Information */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
             <FiBriefcase className="h-5 w-5 text-gray-400 mt-0.5 mx-2" />
             Work Information
@@ -151,10 +152,10 @@ export default function ViewEmployeePage() {
       </div>
 
       {/* Employee Stats */}
-      <div className="bg-white rounded-lg shadow-sm p-6 border">
+      <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Employee Stats</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div className="bg-blue-50 rounded-lg p-3 sm:p-4">
             <p className="text-sm font-medium text-blue-700">Days Employed</p>
             <p className="text-2xl font-bold text-blue-700">
              {employee.days_employed}

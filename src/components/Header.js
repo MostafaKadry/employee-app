@@ -1,5 +1,6 @@
 'use client';
 import { FiMenu, FiUser, FiLogOut } from 'react-icons/fi';
+
 import { useAuth } from '@/context/AuthContext';
 import Swal from 'sweetalert2';
 
@@ -32,7 +33,7 @@ export default function Header({ onMenuClick }) {
           >
             <FiMenu className="h-6 w-6" />
           </button>
-          <h1 className="ml-2 text-xl font-semibold text-gray-900 lg:ml-0">
+          <h1 className="ml-2 hidden md:block text-lg font-semibold text-gray-900 lg:ml-0">
             Employee Management System
           </h1>
         </div>

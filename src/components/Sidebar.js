@@ -8,7 +8,7 @@ import {
   FiBriefcase
 } from 'react-icons/fi';
 import { BsBuildingFill } from "react-icons/bs";
-import { FaGear } from "react-icons/fa6";
+import { TbXboxXFilled } from "react-icons/tb";
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: FiHome },
@@ -26,7 +26,7 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Mobile overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          className="fixed inset-0 z-40 bg-gray-400 opacity-25 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -40,9 +40,9 @@ export default function Sidebar({ isOpen, onClose }) {
           <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 lg:hidden transition-colors"
+            className="p-2 rounded-md text-red-400 hover:text-red-600 hover:bg-red-100 lg:hidden transition-colors"
           >
-            <FaGear className="h-6 w-6" />
+            <TbXboxXFilled className="h-6 w-6" />
           </button>
         </div>
 

@@ -3,8 +3,8 @@
   <p>A modern web application for managing companies, departments, and employees.</p>
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Next.js](https://img.shields.io/badge/Next.js-13+-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
-  [![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
+  [![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+  [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 </div>
 
 A comprehensive employee management system built with Next.js, React, and Tailwind CSS. This application allows organizations to manage companies, departments, and employees with a clean, intuitive user interface.
@@ -46,7 +46,7 @@ A comprehensive employee management system built with Next.js, React, and Tailwi
 
 | Category        | Technologies                         |
 |----------------|--------------------------------------|
-| **Frontend**   | Next.js 13+, React 18+              |
+| **Frontend**   | Next.js 15  , React 19              |
 | **Styling**    | Tailwind CSS                         |
 | **State**      | React Context API                    |
 | **Forms**      | React Hook Form, React Select        |
@@ -57,7 +57,7 @@ A comprehensive employee management system built with Next.js, React, and Tailwi
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18.0.0+
+- Node.js 19.0.0
 - npm or yarn
 - Modern web browser
 
@@ -77,7 +77,7 @@ A comprehensive employee management system built with Next.js, React, and Tailwi
    ```
 
 3. **Environment Setup**
-   Create `.env.local`:
+   Create `.env`:
    ```env
    NEXT_PUBLIC_API_URL=your_api_endpoint
    ```
@@ -157,7 +157,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📝 Author
 
-- **Mostafa Kadry** - [GitHub](https://github.com/MostafaKadry) | [LinkedIn](#)
+- **Mostafa Kadry** - [GitHub](https://github.com/MostafaKadry) | [LinkedIn](https://www.linkedin.com/in/mostafa-kadry-040440169/)
 
 ## 🙏 Acknowledgments
 
