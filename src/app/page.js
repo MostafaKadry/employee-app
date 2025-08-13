@@ -37,7 +37,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-lg md:text-3xl font-bold text-gray-900 mb-2">
               Employee Management System
             </h2>
             <p className="text-gray-600">Sign in to your account</p>
@@ -121,7 +121,7 @@ export default function LoginPage() {
                 <br />
                 Email: mostafakadry806@gmail.com
                 <br />
-                Password: 123
+                Password: cat#123
               </p>
             </div>
 

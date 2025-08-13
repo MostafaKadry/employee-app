@@ -59,7 +59,6 @@ export const AuthProvider = ({ children }) => {
     login: async (credentials) => {
       try {
         const response = await login(credentials);
-        
         if (response.status === 200) {
           const user = {
             name: response.data?.full_name,
