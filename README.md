@@ -1,4 +1,11 @@
-# Employee Management Application
+<div align="center">
+  <h1>🏢 Employee Management System</h1>
+  <p>A modern web application for managing companies, departments, and employees.</p>
+  
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Next.js](https://img.shields.io/badge/Next.js-13+-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+  [![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
+</div>
 
 A comprehensive employee management system built with Next.js, React, and Tailwind CSS. This application allows organizations to manage companies, departments, and employees with a clean, intuitive user interface.
 
@@ -11,78 +18,77 @@ A comprehensive employee management system built with Next.js, React, and Tailwi
 ![Companies](public/images/company.png) 
 ![Departments](public/images/departments.png) 
 ![Employees](public/images/employees.png) 
+![Company Details](public/images/company-details.png)
+![Department Details](public/images/department-details.png)
+![Employee Details](public/images/employee-details.png)
+![Update Employee](public/images/update-employee.png)
+![User Account](public/images/account.png)
+![alert bofer delete](public/images/alertbeforedelete.png)
+## ✨ Key Features
 
-## 🚀 Features
-
-- **Company Management**: Create, view, edit, and delete company records
-- **Department Management**: Organize departments within companies
-- **Employee Directory**: Manage employee information and assignments
-- **User Authentication**: Secure access control with role-based permissions
-- **Responsive Design**: Works on desktop and mobile devices
-- **Modern UI**: Built with Tailwind CSS for a clean, professional look
+- **Company Management**
+  - Full CRUD operations for companies
+  - View company details and relationships
+  
+- **Department Management**
+  - Organize departments within companies
+  - Track department hierarchy
+  
+- **Employee Directory**
+  - Comprehensive employee profiles
+  - Role-based access control
+  
+- **Responsive Design**
+  - Works on all device sizes
+  - Mobile-first approach
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 13+ (App Router)
-- **Styling**: Tailwind CSS
-- **State Management**: React Context API
-- **Form Handling**: React Hook Form
-- **HTTP Client**: Axios
-- **Notifications**: React Hot Toast
-- **UI Components**: React Icons, React Select
-- **Deployment**: Vercel (recommended)
+| Category        | Technologies                         |
+|----------------|--------------------------------------|
+| **Frontend**   | Next.js 13+, React 18+              |
+| **Styling**    | Tailwind CSS                         |
+| **State**      | React Context API                    |
+| **Forms**      | React Hook Form, React Select        |
+| **HTTP**       | Axios                               |
+| **UI**         | React Icons, Headless UI            |
+| **Deployment** | Vercel                              |
 
-## 📋 Prerequisites
+## 🚀 Quick Start
 
-- Node.js 18.0.0 or later
-- npm or yarn package manager
-- Modern web browser (Chrome, Firefox, Safari, Edge)
+### Prerequisites
+- Node.js 18.0.0+
+- npm or yarn
+- Modern web browser
 
-## 🚀 Getting Started
+### Installation
 
-### 1. Clone the Repository
-
-```bash
-git clone [your-repository-url]
-cd employee-app
-```
-
-### 2. Install Dependencies
-
-```bash
-npm install
-# or
-yarn install
-```
-
-### 3. Environment Setup
-
-Create a `.env.local` file in the root directory and add your environment variables:
-
-```env
-NEXT_PUBLIC_API_URL=your_api_url_here
-# Add other environment variables as needed
-```
-
-### 4. Add Screenshots (Optional)
-
-To add screenshots to your project:
-
-1. Place your screenshot images in the `public/images/` directory
-2. Use the following format to include them in the README:
-   ```markdown
-   ![Description of image](/images/your-image.png)
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/MostafaKadry/employee-app.git
+   cd employee-app
    ```
 
-### 5. Run the Development Server
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+3. **Environment Setup**
+   Create `.env.local`:
+   ```env
+   NEXT_PUBLIC_API_URL=your_api_endpoint
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+4. **Start Development Server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+   Visit [http://localhost:3000](http://localhost:3000)
 
 ## 🏗️ Project Structure
 
@@ -95,105 +101,72 @@ src/
 │   ├── employees/         # Employee management
 │   └── dashboard/         # Main dashboard
 ├── components/            # Reusable UI components
-├── context/               # React context providers
-└── services/              # API service layer
+├── context/              # React context providers
+│   └── AppContext.js     # Global application state
+│   └── AuthContext.js    # Authentication state
+└── services/             # API service layer
+    ├── apiConfig.js     # Axios configuration
+    ├── company/        # Company API services
+    ├── departments/     # Department API services
+    └── employee/       # Employee API services
 ```
 
 ## 🔐 Authentication & Authorization
 
-The application implements role-based access control (RBAC) with the following roles:
+The application implements role-based access control (RBAC) using Frappe's authentication system:
 
 - **Admin**: Full access to all features
-- **Manager**: Can manage departments and employees within their company
-- **Employee**: Limited to viewing their own information
+- **HR Manager**: Manage employees and departments
+- **Employee**: Limited to viewing own profile
 
-## 📚 API Documentation
+## ✅ Feature Status
 
-### Authentication
+| Feature                     | Status |
+|----------------------------|--------|
+| User Authentication        | ✅     |
+| Company Management         | ✅     |
+| Department Management      | ✅     |
+| Employee Directory         | ✅     |
+| Responsive Design          | ✅     |
+| Form Validation            | ✅     |
+| Error Handling             | ✅     |
+| Loading States             | ✅     |
+| Toast Notifications        | ✅     |
 
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/logout` - User logout
+## 🔒 Security
 
-### Companies
-
-- `GET /api/companies` - List all companies
-- `POST /api/companies` - Create new company
-- `GET /api/companies/:id` - Get company details
-- `PUT /api/companies/:id` - Update company
-- `DELETE /api/companies/:id` - Delete company
-
-### Departments
-
-- `GET /api/departments` - List all departments
-- `POST /api/departments` - Create new department
-- `GET /api/departments/:id` - Get department details
-- `PUT /api/departments/:id` - Update department
-- `DELETE /api/departments/:id` - Delete department
-
-### Employees
-
-- `GET /api/employees` - List all employees
-- `POST /api/employees` - Create new employee
-- `GET /api/employees/:id` - Get employee details
-- `PUT /api/employees/:id` - Update employee
-- `DELETE /api/employees/:id` - Delete employee
-
-## ✅ Check List
-
-- [x] User authentication and authorization
-- [x] Company management (CRUD)
-- [x] Department management (CRUD)
-- [x] Employee management (CRUD)
-- [x] Responsive design
-- [x] Form validation
-- [x] Error handling
-- [x] Loading states
-- [x] Toast notifications
-
-## 🔒 Security Considerations
-
-- Role-based access control (RBAC)
-- Protected API routes
-- Secure password hashing
-- CSRF protection
-- Input validation and sanitization
-- Secure HTTP headers
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to a GitHub/GitLab/Bitbucket repository
-2. Import the project on Vercel
-3. Add your environment variables
-4. Deploy!
-
-### Other Platforms
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Then start the production server:
-
-```bash
-npm start
-```
+- **Authentication**: JWT-based authentication
+- **Authorization**: Role-based access control
+- **Input Validation**: Client and server-side validation
+- **Secure Headers**: Implemented security headers
+- **API Protection**: Rate limiting and CORS policies
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Here's how you can help:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 📝 Author
+
+- **Mostafa Kadry** - [GitHub](https://github.com/MostafaKadry) | [LinkedIn](#)
+
 ## 🙏 Acknowledgments
 
-- Next.js Team
-- React Team
-- Tailwind CSS Team
-- All open-source contributors
+- Frappe Framework for the backend API
+- Next.js and React communities
+- All contributors and users
+
+---
+
+<div align="center">
+  Made with ❤️ by Mostafa Kadry
+</div>
