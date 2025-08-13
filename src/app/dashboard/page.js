@@ -104,8 +104,8 @@ export default function DashboardPage() {
       } catch (error) {
         console.log(error)
         ToastArrayOfErrors(error, 
-          error?.response?.data?.message||
-          error?.response?.data?.exception||
+          error?.response?.data?.message ||
+          error?.response?.data?.exception ||
           "Failed to fetch employees"
         );
       } finally {
@@ -122,8 +122,8 @@ export default function DashboardPage() {
       } catch (error) {
         console.log(error)
         ToastArrayOfErrors(error, 
-          error?.response?.data?.message||
-          error?.response?.data?.exception||
+          error?.response?.data?.message ||
+          error?.response?.data?.exception ||
           "Failed to fetch employees"
         );
       } finally {
