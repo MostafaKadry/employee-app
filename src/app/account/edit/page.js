@@ -15,7 +15,6 @@ export default function EditAccountPage() {
   });
 
   const onSubmit = async (data) => {
-    // Mock update - in a real app, this would be an API call
     toast.success('Account updated successfully');
     router.push('/account');
   };
@@ -83,7 +82,7 @@ export default function EditAccountPage() {
                 Role
               </label>
               <input
-                {...register('role')}
+                value="HR Manager"
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
                 placeholder="Your role"
