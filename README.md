@@ -2,13 +2,15 @@
 
 A comprehensive employee management system built with Next.js, React, and Tailwind CSS. This application allows organizations to manage companies, departments, and employees with a clean, intuitive user interface.
 
-![Dashboard Preview](public/images/dashboard-preview.png)
+![Dashboard Preview](public/images/company-details.png)
 
 ## 📸 Screenshots
 
-| Dashboard | Companies | Departments | Employees |
-|-----------|-----------|-------------|-----------|
-| ![Dashboard](public/images/dashboard.png) | ![Companies](public/images/company.png) | ![Departments](public/images/departments.png) | ![Employees](public/images/employees.png) |
+
+![Dashboard](public/images/dashbord.png) 
+![Companies](public/images/company.png) 
+![Departments](public/images/departments.png) 
+![Employees](public/images/employees.png) 
 
 ## 🚀 Features
 
