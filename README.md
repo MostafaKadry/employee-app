@@ -8,9 +8,12 @@
 </div>
 
 A comprehensive employee management system built with Next.js, React, and Tailwind CSS. This application allows organizations to manage companies, departments, and employees with a clean, intuitive user interface.
+---
 
+Note before proceeds:
+I had two options for building this project: React/Next.js or Vue.js. Since I’m proficient in both, I could have developed it using either. However, in the end, I decided to go with Next.js.
 ![Dashboard Preview](public/images/company-details.png)
-
+---
 ## 📸 Screenshots
 
 
