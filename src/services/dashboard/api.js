@@ -1,4 +1,5 @@
 import instance from "../apiConfig";
+const BASE_ROUTE = "method/employee_app.employee_app.api.dashboard."; 
 const WORKFLOW_BASE_ROUTE = "method/frappe.workflow.doctype.workflow.workflow.";
 const EMPLOYEE_BASE_ROUTE = "method/employee_app.employee_app.api.employee.";
 export const getRecentlyHiredEmployees = () =>
@@ -24,3 +25,7 @@ export const getWorkFlowStatsForEmployee = () =>
   instance.get(
     `http://employee.site:8002/api/method/frappe.model.workflow.get_transitions`
   );
+
+export const getDashboardStats = () =>
+  instance.get(`${BASE_ROUTE}get_dashboard_stats`);
+  

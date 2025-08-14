@@ -6,7 +6,6 @@ import { FiArrowLeft, FiEdit, FiUsers } from "react-icons/fi";
 import { FaBuilding } from "react-icons/fa";
 import {
   getDepartmentById,
-  getDepartmentRelatedEmployees,
 } from "@/services/departments/api";
 
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -23,14 +22,11 @@ export default function ViewDepartmentPage() {
       setLoading(true);
       try {
         const res = await getDepartmentById(params.id);
-        const employeesRes = await getDepartmentRelatedEmployees(params.id);
+
         console.log(res);
-        console.log(employeesRes);
         if (res.status === 200) {
-          setDepartment(res.data.message);
-        }
-        if (employeesRes.status === 200) {
-          setEmployees(employeesRes.data.message);
+          setDepartment(res.data.data.department);
+          setEmployees(res.data.data.employees);
         }
       } catch (error) {
         console.error("Error fetching department:", error);

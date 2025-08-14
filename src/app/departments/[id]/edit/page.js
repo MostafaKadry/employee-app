@@ -44,10 +44,11 @@ export default function EditDepartmentPage() {
         setLoading(true);
         const response = await getDepartmentById(params.id);
         console.log(response);
-        if (response.status === 200) {
-          setDepartment(response.data.message);
+        const { status, data } = response;
+        if (status === 200) {
+          setDepartment(data.data.department);
           reset({
-            department_name: response.data.message.department_name,
+            department_name: data.data.department.department_name,
           });
         }
       } catch (error) {

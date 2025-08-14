@@ -1,8 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { useApp } from '@/context/AppContext';
 import { FiArrowLeft } from 'react-icons/fi';
 import Link from 'next/link';
 import {getCompanyById, updateCompany} from '@/services/company/api';
@@ -10,7 +9,6 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import toast from 'react-hot-toast';
 export default function EditCompanyPage() {
   const params = useParams();
-  const router = useRouter();
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
@@ -22,9 +20,11 @@ export default function EditCompanyPage() {
       try {
         setLoading(true);
         const response = await getCompanyById(params.id);
-        console.log(response.data.message.name);
-        setCompany(response.data.message);
-        reset(response.data.message);
+        const { status, data } = response;
+        if (status === 200) {
+          setCompany(data.data.company);
+          reset(data.data.company);
+        }
       } catch (error) {
         console.error('Error fetching company:', error);
       } finally {

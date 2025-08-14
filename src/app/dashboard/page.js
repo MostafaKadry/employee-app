@@ -6,11 +6,7 @@ import { BsBuildingFill } from "react-icons/bs";
 import LoadingSpinner from '@/components/LoadingSpinner';
 import toast from 'react-hot-toast';
 import ToastArrayOfErrors from '@/lib/ToastArrayOfErrors';
-import { getAllCompanies } from '@/services/company/api';
-import {getDepartmentsCount} from '@/services/departments/api'
-import {  getEmployeesCount } from '@/services/employee/api';
-import { getRecentlyHiredEmployees } from '@/services/dashboard/api';
-
+import {getDashboardStats} from "@/services/dashboard/api";
 
 export default function DashboardPage() {
   const { dispatch } = useApp();
@@ -24,7 +20,7 @@ export default function DashboardPage() {
   const stats = [
     {
       name: 'Total Companies',
-      value: companies.length,
+      value: companiesCount,
       icon: BsBuildingFill,
       color: 'bg-blue-500',
       bgColor: 'bg-blue-50',
@@ -48,7 +44,7 @@ export default function DashboardPage() {
     },
     {
       name: 'Avg Employees/Company',
-      value: companies.length > 0 ? Math.round(employeesCount / companies.length) : 0,
+      value: companiesCount > 0 ? Math.round(employeesCount / companiesCount) : 0,
       icon: FiTrendingUp,
       color: 'bg-orange-500',
       bgColor: 'bg-orange-50',
@@ -57,84 +53,38 @@ export default function DashboardPage() {
   ];
 
   useEffect(() => {
-    const fetchCompanies = async () => {
+    const fetchDashboardStats = async () => {
       try {
-        const res = await getAllCompanies();
-        console.log(res)
-        if (res.status === 200) {
-          dispatch({ type: 'SET_COMPANIES', payload: res.data });
-          setCompanies(res.data.message);
+        const response = await getDashboardStats();
+        const { status, data } = response; 
+        const dashboardData = data?.data || {};
+  
+        console.log("Dashboard Stats:", dashboardData);
+  
+        if (status === 200) {
+          dispatch({ type: 'SET_COMPANIES', payload: dashboardData.companies });
+  
+          setCompanies(dashboardData.companies || []);
+          setCompaniesCount(dashboardData.companies?.length || 0);
+          setDepartmentsCount(dashboardData.department_count || 0);
+          setEmployeesCount(dashboardData.employees_count || 0);
+          setEmployees(dashboardData.recent_employees || []);
         }
       } catch (error) {
-        ToastArrayOfErrors(error, 
-          error?.response?.data?.message||
-          error?.response?.data?.exception||
-          "Failed to fetch employees"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchDepartments = async () => {
-      try {
-        const res = await getDepartmentsCount();
-       
-        console.log(res)
-        if (res.status === 200) {
-          setDepartmentsCount(res.data.data.total_departments);
-        }
-      } catch (error) {
-        console.log(error)
-        ToastArrayOfErrors(error, 
-          error?.response?.data?.message||
-          error?.response?.data?.exception||
-          "Failed to fetch employees"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchEmployees = async () => {
-      try {
-        const res = await getRecentlyHiredEmployees();
-        console.log(res.data.data)
-        if (res.status === 200) {
-          setEmployees(res.data.data);
-        }
-      } catch (error) {
-        console.log(error)
-        ToastArrayOfErrors(error, 
+        ToastArrayOfErrors(
+          error,
           error?.response?.data?.message ||
           error?.response?.data?.exception ||
-          "Failed to fetch employees"
+          "Failed to fetch dashboard stats"
         );
       } finally {
         setLoading(false);
       }
     };
-    const fetchEmployeesCount = async () => {
-      try {
-        const res = await getEmployeesCount();
-        console.log(res)
-        if (res.status === 200) {
-          setEmployeesCount(res.data.data.total_employees);
-        }
-      } catch (error) {
-        console.log(error)
-        ToastArrayOfErrors(error, 
-          error?.response?.data?.message ||
-          error?.response?.data?.exception ||
-          "Failed to fetch employees"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCompanies();
-    fetchDepartments();
-    fetchEmployees();
-    fetchEmployeesCount();
+  
+    fetchDashboardStats();
   }, []);
+  
 
   if (loading) return <LoadingSpinner />
 

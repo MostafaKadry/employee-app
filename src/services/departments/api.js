@@ -8,4 +8,3 @@ export const createDepartment = (department) => instance.post(`${BASE_ROUTE}crea
 export const updateDepartment = (department) => instance.put(`${BASE_ROUTE}update_department/?name=${department.name}`, department);
 export const deleteDepartment = (id) => instance.delete(`${BASE_ROUTE}delete_department/?name=${id}`);
 export const getDepartmentsCount = () => instance.get(`${BASE_ROUTE}get_all_depratments_count`)
-export const getDepartmentRelatedEmployees = (id) => instance.get(`${BASE_ROUTE}get_department_related_employees/?name=${id}`);
